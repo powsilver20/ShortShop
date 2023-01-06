@@ -32,10 +32,15 @@ def checklogin(type):
         return render_template("feed.html")
 
     if (len(rows)) == 1 and (type == "seller"):
-        return render_template("sellerfeed.html")
+        return redirect(f"/seller/home/{UN}")
+        return render_template("create-listing.html")
 
     else:
         return redirect(f"/login/{type}")
+
+@app.route("/seller/home/<id>")
+def sellerhome(id):
+    return render_template("create-listing.html")
 
 @app.route("/login/<var>")
 def home(var):
@@ -64,7 +69,8 @@ def register_buyer():
         print(dUN, postcode)
         sqlconnection = sqlite3.Connection(currentlocation + "/database/users.db")
         cursor = sqlconnection.cursor()
-        query2 = f"INSERT INTO buyer VALUES('{dUN}', '{dPW}', '{firstname}', '{lastname}', '{billaddress1}', '{billaddress2}', '{billaddress3}', '{postcode}', '{cardnumber}', '{cvcnumber}', '{expirerydate}', '{billname}' )"
+        query2 = f"INSERT INTO buyer VALUES('{dUN}', '{dPW}', '{firstname}', '{lastname}', '{billaddress1}', '{billaddress2}'," \
+                 f" '{billaddress3}', '{postcode}', '{cardnumber}', '{cvcnumber}', '{expirerydate}', '{billname}' )"
         query3 = f"INSERT INTO catagories VALUES('{dUN}', 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5)"
         cursor.execute(query2)
         cursor.execute(query3)
