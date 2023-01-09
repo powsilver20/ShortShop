@@ -82,42 +82,40 @@
         grid-column: 3 / 4;
         grid-row: 4 / 5;
     }
+
+    .listings_list{
+        grid-column: 2 / 4;
+        grid-row: 1 / 5;
+    }
     </style>
 
 </head>
 <body>
     <div class="container">
-        <div class = "listing"><button class = "button">Create Listing</button></div>
-        <div class = "your_listings"><button class = "button" onclick="redirect()">Your Listings</button></div>
-        <div class = "upload_image">
-            <input type="file" id="file" accept="image/*">
-            <label for="file">Select image</label>
+        <div class = "listing"><button class = "button" onclick = "redirect()">Create Listing</button></div>
+        <div class = "your_listings" ><button class = "button">Your Listings</button></div>
+        <div class = "listings_list">
+            <center><h1>{{id}}'s listings</h1></center>
+            <table>
+              <tr>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Price</th>
+              </tr>
+              {% for product in products %}
+              <tr>
+                <td>{{ product[1] }}</td>
+                <td><img src="data:image/jpeg;base64,{{ product[2] }}" /></td>
+                <td>{{ product[3] }}</td>
+              </tr>
+              {% endfor %}
+            </table>
         </div>
-        <div class = "input_name"><input type="text"></div>
-        <div class = "description">
-            <textarea name="description" rows = "20" columns = "20"></textarea>
-            <br>
-            price:
-            <input type="number" name = "price" id = "price"/>
-            <br>
-            category:
-            <select name="category" id="category">
-                <option value="Productive">Productive</option>
-                <option value="Fun">Fun</option>
-                <option value="Prank">Prank</option>
-                <option value="Health">Health</option>
-                <option value="Fashion">Fashion</option>
-            </select>
-
-        </div>
-
-        <div class = "submit"><input type = "submit" name = "submit" id = "submit"/></div>
     </div>
-
 </body>
 <script>
 function redirect() {
-  window.location.href = 'http://127.0.0.1:5000/yourlistings';
+  window.location.href = 'http://127.0.0.1:5000/seller/home/{{id}}';
 }
 </script>
 </html>
