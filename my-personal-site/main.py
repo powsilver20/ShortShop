@@ -5,12 +5,12 @@ connproducts = "database/products.db"
 connusers = "database/users.db"
 app = Flask(__name__)
 productsdb = "CREATE TABLE product ("\
-               "productID INTEGER PRIMARY KEY, "\
+               "productID varchar(100) PRIMARY KEY, "\
                "productname varchar(30) NOT NULL, "\
                "description varchar(250) NOT NULL, " \
                "sellerID varchar(250) NOT NULL,"\
                "image BLOB NOT NULL, "\
-               "price INTEGER NOT NULL, "\
+               "price STRING NOT NULL, "\
                "category varchar(250) NOT NULL) "
 sellerdatabase = "CREATE TABLE seller (" \
                  "email varchar(250) PRIMARY KEY UNIQUE, " \
@@ -46,9 +46,11 @@ catagories = "CREATE TABLE catagories ("\
                "utilities INTEGER NOT NULL," \
                "comfort INTEGER NOT NULL," \
                "luxury INTEGER NOT NULL)"
-db = sqlite3.connect(connusers)
+drop = "DROP TABLE product"
+db = sqlite3.connect(connproducts)
 cursor = db.cursor()
 
+cursor.execute(productsdb)
 db.commit()
 db.close()
 # user = sqlite3.connect("database/users.db")

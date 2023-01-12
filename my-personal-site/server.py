@@ -1,3 +1,5 @@
+import base64
+
 from flask import Flask,request, render_template,redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -12,6 +14,13 @@ import uuid
 app = Flask(__name__)
 
 currentlocation = os.path.dirname(os.path.abspath(__file__))
+
+def algorithm():
+    pass
+@app.route('/buyer/feed/<id>/<product>')
+def feedpage(id ,product):
+
+    return render_template("feed.html")
 
 @app.route("/")
 def homepage():
@@ -29,18 +38,50 @@ def checklogin(type):
     cursor.execute(query1)
     rows = cursor.fetchall()
     if (len(rows)) ==1 and (type == "buyer"):
-        return render_template("feed.html")
+        return redirect(f"/buyer/feed/{UN}/x")
 
     if (len(rows)) == 1 and (type == "seller"):
         return redirect(f"/seller/home/{UN}")
-        return render_template("create-listing.html")
+        return render_template("seller-create-listing.html")
 
     else:
         return redirect(f"/login/{type}")
-
-@app.route("/seller/home/<id>")
+@app.route("/seller/home/<id>",methods=['POST', 'GET'])
 def sellerhome(id):
-    return render_template("create-listing.html")
+    if request.method == 'POST':
+        image = request.files['file']
+        product_name = request.form['product-name']
+        description = request.form['description']
+        price = request.form['price']
+        category = request.form['category']
+
+
+        if image and product_name and description and price and category:
+            product_id = str(uuid.uuid4())
+            data = image.read()
+            data = base64.b64encode(data).decode()
+            print(product_id)
+            sqlconnection = sqlite3.Connection(currentlocation + "/database/products.db")
+            cursor = sqlconnection.cursor()
+            query = "INSERT INTO product (productID, productname, description, sellerID, image, price, category) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            cursor.execute(query, (product_id, product_name, description, id, data, price, category))
+            sqlconnection.commit()
+            sqlconnection.close()
+    return render_template('seller-create-listing.html' , id=id)
+
+@app.route("/seller/yourlistings/<id>")
+def sellerlistings(id):
+    print("pass")
+    sqlconnection = sqlite3.Connection(currentlocation + "/database/products.db")
+    cursor = sqlconnection.cursor()
+    query = f"SELECT * FROM product WHERE sellerID = ?"
+    cursor.execute(query,(id,))
+    rows = cursor.fetchall()
+    sqlconnection.commit()
+    cursor.close()
+    sqlconnection.close()
+
+    return render_template("seller-your-listings.html" , id=id , rows=rows, )
 
 @app.route("/login/<var>")
 def home(var):
